@@ -1,0 +1,92 @@
+
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+
+  usuarios:
+    build:
+      context: ./services/usuarios
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8000:80"
+    volumes:
+      - ./services/usuarios:/app
+    working_dir: /app
+
+  pacientes:
+    build:
+      context: ./services/pacientes
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8001:80"
+    volumes:
+      - ./services/pacientes:/app
+    working_dir: /app
+
+  citas:
+    build:
+      context: ./services/citas
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8002:80"
+    volumes:
+      - ./services/citas:/app
+    working_dir: /app
+
+  historia_clinica:
+    build:
+      context: ./services/historia_clinica
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8003:80"
+    volumes:
+      - ./services/historia_clinica:/app
+    working_dir: /app
+
+  prestaciones:
+    build:
+      context: ./services/prestaciones
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8004:80"
+    volumes:
+      - ./services/prestaciones:/app
+    working_dir: /app
+
+  consentimientos:
+    build:
+      context: ./services/consentimientos
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8005:80"
+    volumes:
+      - ./services/consentimientos:/app
+    working_dir: /app
+
+  facturacion:
+    build:
+      context: ./services/facturacion
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8006:80"
+    volumes:
+      - ./services/facturacion:/app
+    working_dir: /app
+
+  analytics:
+    build:
+      context: ./services/analytics
+    command: uvicorn main:app --host 0.0.0.0 --port 80
+    ports:
+      - "8007:80"
+    volumes:
+      - ./services/analytics:/app
+    working_dir: /app
