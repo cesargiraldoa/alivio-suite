@@ -1,9 +1,16 @@
 <template>
-  <Login />
+  <div>
+    <ChatGerencial />
+  </div>
 </template>
 
 <script>
+import ChatGerencial from './ChatGerencial.vue'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    ChatGerencial
+  }
 }
 </script>
