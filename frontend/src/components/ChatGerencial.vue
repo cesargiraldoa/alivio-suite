@@ -1,14 +1,20 @@
-
 <template>
   <div class="chat-container">
     <h1>Chat Gerencial Inteligente</h1>
     <div class="chat-box">
-      <div v-for="(msg, index) in chatHistory" :key="index">
-        <p><strong>🤖 Sistema:</strong> {{ msg.text }}</p>
+      <div v-for="(msg, index) in chatHistory" :key="index" class="message">
+        <strong>🤖 <span style="color: black">{{ msg.sender }}:</span></strong>
+        <span>{{ msg.text }}</span>
       </div>
     </div>
-    <input v-model="userMessage" @keyup.enter="sendMessage" placeholder="Escribe tu pregunta..." />
-    <button @click="sendMessage">Enviar</button>
+    <div class="input-container">
+      <input
+        v-model="userMessage"
+        @keyup.enter="sendMessage"
+        placeholder="Escribe tu pregunta..."
+      />
+      <button @click="sendMessage">Enviar</button>
+    </div>
   </div>
 </template>
 
@@ -19,57 +25,93 @@ export default {
     return {
       userMessage: '',
       chatHistory: [
-        { text: 'Hola 👋 soy tu asistente gerencial. ¿En qué puedo ayudarte?' }
+        {
+          sender: 'Sistema',
+          text: 'Hola 👋 soy tu asistente gerencial. ¿En qué puedo ayudarte?'
+        }
       ],
       apiUrl: 'https://chat-api-q0jg.onrender.com/ask'
     };
   },
   methods: {
     async sendMessage() {
-      if (!this.userMessage) return;
-      const mensaje = this.userMessage;
-      this.chatHistory.push({ text: `👤 Tú: ${mensaje}` });
+      const message = this.userMessage.trim();
+      if (!message) return;
+
+      // Mostrar mensaje del usuario
+      this.chatHistory.push({ sender: 'Tú', text: message });
       this.userMessage = '';
+
       try {
         const response = await fetch(this.apiUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: mensaje })
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ question: message })
         });
+
+        if (!response.ok) {
+          throw new Error('Error al llamar a la API');
+        }
+
         const data = await response.json();
-        this.chatHistory.push({ text: `🤖 ${data.respuesta}` });
+        this.chatHistory.push({ sender: 'Sistema', text: data.respuesta });
       } catch (error) {
-        this.chatHistory.push({ text: '⚠️ Error conectando con el servidor.' });
+        this.chatHistory.push({
+          sender: 'Sistema',
+          text: '⚠️ Error conectando con el servidor.'
+        });
       }
     }
   }
-}
+};
 </script>
 
-<style>
+<style scoped>
 .chat-container {
-  font-family: Arial, sans-serif;
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem;
+  max-width: 800px;
+  margin: 40px auto;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
 }
+
 .chat-box {
-  background: #eee;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  min-height: 150px;
+  background-color: #f1f1f1;
+  padding: 20px;
+  border-radius: 15px;
+  min-height: 200px;
+  margin-bottom: 20px;
+  text-align: left;
 }
+
+.message {
+  margin: 10px 0;
+}
+
+.input-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 input {
   width: 70%;
-  padding: 0.5rem;
-  margin-right: 0.5rem;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
 }
+
 button {
-  padding: 0.5rem 1rem;
+  padding: 10px 20px;
+  font-size: 16px;
   background-color: #2ecc71;
-  border: none;
   color: white;
-  border-radius: 5px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
-</style>
+
+button:hover {
+  background-color: #27ae60;
